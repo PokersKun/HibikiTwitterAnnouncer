@@ -26,7 +26,6 @@ suspend fun checkNewTweet(bot: Bot) {
                 delay(10000L)
             }
             PluginData.groups.forEach {
-                //PluginMain.logger.info(it.toString())
                 while (true) {
                     try {
                         targetGroup = bot.getGroup(it)!!
@@ -68,11 +67,8 @@ suspend fun checkNewTweet(bot: Bot) {
             }
         }
 
-
         PluginMain.logger.info("检测正常结束")
         delay(60000L)
-
-
     }
 }
 
@@ -86,12 +82,10 @@ private suspend fun singleTryForNewTweet(group: Group, target: String) {
     val resultCount = tweetMeta?.getString("result_count").toString()
     PluginMain.logger.info { "获取来自${target}的$resultCount" + "条新tweets" }
 
-
     if (resultCount == "0") {
         PluginMain.logger.info("@${target}暂时没有更新")
         delay(1000L)
         return
-        //throw (Exception("Nothing New"))
     }
 
     var ifFirstToSend = true
@@ -103,12 +97,10 @@ private suspend fun singleTryForNewTweet(group: Group, target: String) {
 
         if (ifFirstToSend) PluginData.lastTweetID[target] = newestTweetID
 
-        //PluginMain.logger.info(PluginData.filterWith.toString())
         if (PluginData.filterWith[target]!=null){
             PluginData.filterWith[target]!!.forEach{
                 if (!newestText.contains(it)) {
                     PluginMain.logger.info("有消息被用户过滤器阻止")
-                    //throw Exception("Message Blocked By User Defined Filter")
                     return
                 }
             }
@@ -118,25 +110,21 @@ private suspend fun singleTryForNewTweet(group: Group, target: String) {
             PluginData.filterWithout[target]!!.forEach{
                 if (newestText.contains(it)) {
                     PluginMain.logger.info("有消息被用户过滤器阻止")
-                    //throw Exception("Message Blocked By User Defined Filter")
                     return
                 }
             }
         }
 
-
-        //PluginMain.logger.info("Now trying to get mediaUrls")
         val mediaUrls = if (data.containsKey("attachments")) {
             getMediaUrlsFromKeys(
                 tweetMedia = newestTweets.getJSONObject("includes").getJSONArray("media"),
                 mediaKeys = data.getJSONObject("attachments").getJSONArray("media_keys")
             )
         } else null
-        //PluginMain.logger.info("Now end getting mediaUrls")
+
         var toSay = PlainText("@${target}:\r\n").toMessageChain()
         if ("null" != newestText) {
             toSay += newestText.toPlainText()
-            //inquirerGroup.sendMessage(newestText.toPlainText())
         }
         // 由于tx不让新号一次发送约100(104?)个字符以上的PlainText，故此处使用特殊处理分割,可以通过命令开关
 
@@ -147,15 +135,11 @@ private suspend fun singleTryForNewTweet(group: Group, target: String) {
             ifFirstToSend = false
         }
 
-
         if (PluginConfig.ifNeedToSplit) toSay = sendAndSplitToUnder100(toSay.content.toPlainText(), group)
-
 
         if (!mediaUrls.isNullOrEmpty()) {
             PluginMain.logger.info("有${mediaUrls.size}张图片")
             mediaUrls.forEach {
-                //PluginMain.logger.info("url = $it")
-                //inquirerGroup.sendMessage(
                 var ifSuccess: Boolean
                 do {
                     try {
@@ -170,9 +154,6 @@ private suspend fun singleTryForNewTweet(group: Group, target: String) {
                         ifSuccess = false
                     }
                 } while (!ifSuccess)
-
-                //)
-                //inquirerGroup.sendMessage(it.toString())
             }
             mediaUrls.clear()
         }
@@ -181,6 +162,5 @@ private suspend fun singleTryForNewTweet(group: Group, target: String) {
             delay(1000L)
         }
     }
-
 
 }

@@ -89,7 +89,7 @@ object StopListen : SimpleCommand(
     suspend fun MemberCommandSenderOnMessage.stopListener(){
         if (PluginData.groups.contains(group.id)) {
             PluginData.groups.remove(group.id)
-            group.sendMessage("呜呜 以后不说了哦")
+            group.sendMessage("乌乌，以后不说了哦")
             PluginData.ifGroupListHasChanged = true
         } else {
             group.sendMessage("哎呀，本来就没有订阅呢")

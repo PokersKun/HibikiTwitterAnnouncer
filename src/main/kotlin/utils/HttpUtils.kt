@@ -29,10 +29,6 @@ fun recentSearchUrlGenerator(
         if (sinceID != "0") "&since_id=$sinceID" else ""
 }
 
-//"baseRecent" to "https://api.twitter.com/2/tweets/search/recent?query=from:YuGiOh_OCG_INFO" +
-//            "&expansions=attachments.media_keys" +
-//            "&media.fields=url"
-
 val bearerToken = PluginConfig.Tokens["bearerToken"]
 val proxy = Proxy(
     Proxy.Type.HTTP, InetSocketAddress(
@@ -58,7 +54,6 @@ fun httpGet(url: String): JSONObject {
             InputStreamReader(connection.inputStream, "utf-8")
         )
         val output: String = reader.readLine()
-        //PluginMain.logger.info("Response = ${output.toString()} ")
 
         return JSON.parseObject(output)
 

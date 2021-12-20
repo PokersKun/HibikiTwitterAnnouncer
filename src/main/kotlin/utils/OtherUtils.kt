@@ -10,7 +10,7 @@ import com.google.common.collect.ImmutableMap
 import java.io.InputStream
 
 suspend fun convertMP4ToGIF(url: String): InputStream? {
-    //print(1)
+
     try {
         val cloudConvertClient = CloudConvertClient(
             StringSettingsProvider(
@@ -18,8 +18,6 @@ suspend fun convertMP4ToGIF(url: String): InputStream? {
                 "webhook-signing-secret", false
             )
         )
-
-        //println(cloudConvertClient)
 
         val createJobResponse = cloudConvertClient.jobs().create(
             ImmutableMap.of(
@@ -33,17 +31,11 @@ suspend fun convertMP4ToGIF(url: String): InputStream? {
             )
         ).body
 
-        //println(createJobResponse)
-
         val waitJobResponse = cloudConvertClient.jobs().wait(createJobResponse!!.id).body
-
-        //print(waitJobResponse)
 
         val exportUrlTask =
             waitJobResponse!!.tasks.stream().filter { taskResponse: TaskResponse -> taskResponse.name == "export-my-file" }
                 .findFirst().get()
-
-        //println(exportUrlTask)
 
         val exportUrl = exportUrlTask.result.files[0]["url"]!!
 

@@ -36,28 +36,16 @@ object PluginMain : KotlinPlugin(
 
     override fun onEnable() {
         logger.info { "Plugin loaded" }
-        //logger.info{PluginConfig.APIs["recent"].toString()}
 
         PluginConfig.reload()
-
         PluginData.reload()
 
         var lastMessage: MessageChain = PlainText("").serializeToMiraiCode().deserializeMiraiCode()
         var repeatingCount = 1
         PluginData.ifGroupListHasChanged = true
-        //PluginConfig.APIs["usersBy"] = "https://api.twitter.com/2/users/by"
-        //Logger.getLogger(OkHttpClient.javaClass.name).level = Level.FINE
-
 
         globalEventChannel().subscribeAlways<GroupMessageEvent> {
             val messageText = message.contentToString()
-
-            //logger.info("last code = ${lastMessage.serializeToMiraiCode()} & " +
-            //    "this code = ${message.serializeToMiraiCode()}")
-
-
-
-
             messageEventHandler(messageText)
 
             // 复读功能
@@ -66,7 +54,7 @@ object PluginMain : KotlinPlugin(
             when {
                 messageText.startsWith("不准复读") -> {
                     PluginData.repeatProbability = -1
-                    group.sendMessage("呜呜")
+                    group.sendMessage("乌乌")
                 }
                 messageText.startsWith("可以复读吗") -> {
                     val toSay: String = when (PluginData.repeatProbability) {
@@ -81,7 +69,6 @@ object PluginMain : KotlinPlugin(
 
                 }
             }
-
 
             // 跟读
             if (message.serializeToMiraiCode() == lastMessage.serializeToMiraiCode()) {
@@ -99,14 +86,10 @@ object PluginMain : KotlinPlugin(
             }
 
             lastMessage = message
-            // logger.info(message.contentToString().length.toString())
-
-
             delay(100L)
         }
 
         PluginMain.launch {
-
             while (true) {
                 try {
                     bot = Bot.instances[0]

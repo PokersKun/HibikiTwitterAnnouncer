@@ -57,7 +57,6 @@ suspend fun getTimelineAndSendMessage(
     target: String = "from:YuGiOh_OCG_INFO",
     maxResults: Int = 10,
 ) {
-    //val timeline = APIs["baseRecent"]?.let { httpGet(it) }
     try {
         val timeline = httpGet(
             recentSearchUrlGenerator(
@@ -82,27 +81,21 @@ suspend fun getTimelineAndSendMessage(
         val tweetData = timeline.getJSONArray("data")
         val tweetMedia = timeline.getJSONObject("includes")?.getJSONArray("media")
         val authors = timeline.getJSONObject("includes")?.getJSONArray("users")
-        //PluginMain.logger.info("一共有${tweetMedia?.size}张图片")
 
-        //PluginMain.logger.info("${tweetMeta.toString()}")
         globalNextToken = tweetMeta?.getString("next_token")
 
         var mediaUrls: MutableList<String> = mutableListOf()
-
-
 
         for (count in startCount until min(startCount + maxCount, min(10, resultCount.toInt()))) {
             var toSay: Message = buildMessageChain { }
 
             val newestTweet = tweetData?.getJSONObject(count)
-            // val newestID = newestTweet?.getString("id").toString()
             val newestText = newestTweet?.getString("text").toString()
             val authorID = newestTweet?.getString("author_id")
 
             if (newestTweet != null) {
                 if (newestTweet.containsKey("attachments")) {
                     val mediaKeys = newestTweet.getJSONObject("attachments").getJSONArray("media_keys").toList()
-                    //PluginMain.logger.info("这条tweet的配图id分别是${mediaKeys.toString()}")
                     mediaUrls = getMediaUrlsFromKeys(tweetMedia, mediaKeys)
                 }
 
@@ -118,12 +111,9 @@ suspend fun getTimelineAndSendMessage(
                 }
             }
 
-
             if ("null" != newestText) {
                 toSay += newestText.toPlainText()
-                //inquirerGroup.sendMessage(newestText.toPlainText())
             }
-
             // 由于tx不让一次发送约100(104?)个字符以上的PlainText，故此处使用特殊处理分割,可以通过命令开关
 
             if (PluginConfig.ifNeedToSplit) toSay = sendAndSplitToUnder100(toSay.content.toPlainText(), inquirerGroup)
@@ -132,14 +122,11 @@ suspend fun getTimelineAndSendMessage(
                 PluginMain.logger.info("有${mediaUrls.size}张图片")
                 mediaUrls.forEach {
                     PluginMain.logger.info("url = $it")
-                    //inquirerGroup.sendMessage(
                     toSay += Image(
                         URL(it).openConnection(proxy).getInputStream()
                             .uploadAsImage(inquirerGroup)
                             .imageId
                     )
-                    //)
-                    //inquirerGroup.sendMessage(it.toString())
                 }
                 mediaUrls.clear()
             }
@@ -159,7 +146,6 @@ suspend fun getTimelineAndSendMessage(
             }
         }
     }
-
 
 }
 
@@ -187,7 +173,6 @@ fun checkUserName(userName: String): String {
                 "/username/$userName"
         )
         if (userData.containsKey("errors")) throw Exception("No Such User")
-        // PluginMain.logger.info(name)
         return userData.getJSONObject("data").getString("name")
     } catch (e: Exception) {
         throw e
@@ -202,7 +187,6 @@ fun getMediaUrlsFromKeys(
     for (i in 0 until tweetMedia?.size!!) {
         val media = tweetMedia.getJSONObject(i)
         if (media.getString("type") == "photo" && media.getString("media_key").toString() in mediaKeys) {
-            //PluginMain.logger.info(media.toString())
             mediaUrls.add(media.getString("url"))
         }
     }

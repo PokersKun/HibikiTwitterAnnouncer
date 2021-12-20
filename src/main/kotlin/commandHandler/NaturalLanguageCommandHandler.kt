@@ -40,7 +40,7 @@ suspend fun GroupMessageEvent.messageEventHandler(messageText: String) {
         toSay =
             PlainText(
                 "查询<twitterID>的<number>条推文 ->" +
-                    "获取<number>条来自@<twitterID>的最新推文,其中<number>为阿拉伯数字,"
+                    "获取<number>条来自@<twitterID>的最新推文，其中<number>为阿拉伯数字"
             ).toMessageChain()
         // "<twitterID>为只包含英文/数字/下划线的标准TwitterID").toMessageChain()
         group.sendMessage(toSay)
@@ -49,7 +49,7 @@ suspend fun GroupMessageEvent.messageEventHandler(messageText: String) {
             PlainText(
                 "查询关于<object>的<number>条推文 ->" +
                     "获取包含<object>关键字的<number>条推文，" +
-                    "其中<object>为任意UTF-8标准字符,<number>为阿拉伯数字"
+                    "其中<object>为任意UTF-8标准字符，<number>为阿拉伯数字"
             ).toMessageChain()
         group.sendMessage(toSay)
         delay(500L)
@@ -89,11 +89,11 @@ suspend fun GroupMessageEvent.messageEventHandler(messageText: String) {
                 "关闭对长句的自动分割").toMessageChain()
         group.sendMessage(toSay)
         toSay =
-            PlainText("添加@<username>的过滤器:包含<keyword> ->" +
+            PlainText("添加@<username>的过滤器：包含<keyword> ->" +
                 "只推送包含<keyword>的来自<username>的twitter").toMessageChain()
         group.sendMessage(toSay)
         toSay =
-            PlainText("添加@<username>的过滤器:不包含<keyword> ->" +
+            PlainText("添加@<username>的过滤器：不包含<keyword> ->" +
                 "不推送包含<keyword>的来自<username>的twitter").toMessageChain()
         group.sendMessage(toSay)
         return
@@ -212,7 +212,7 @@ suspend fun GroupMessageEvent.messageEventHandler(messageText: String) {
     if (messageText == "取消订阅") {
         if (PluginData.groups.contains(group.id)) {
             PluginData.groups.remove(group.id)
-            group.sendMessage("呜呜 以后不说了哦")
+            group.sendMessage("乌乌，以后不说了哦")
             PluginData.ifGroupListHasChanged = true
         } else {
             group.sendMessage("哎呀，本来就没有订阅呢")
