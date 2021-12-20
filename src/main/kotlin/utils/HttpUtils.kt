@@ -31,7 +31,8 @@ fun recentSearchUrlGenerator(
 
 val bearerToken = PluginConfig.Tokens["bearerToken"]
 val proxy = Proxy(
-    Proxy.Type.HTTP, InetSocketAddress(
+//    Proxy.Type.HTTP, InetSocketAddress(
+    Proxy.Type.SOCKS, InetSocketAddress(    // change to socks5
         PluginConfig.Proxies["host"].toString(),
         PluginConfig.Proxies["port"].toString().toInt()
     )

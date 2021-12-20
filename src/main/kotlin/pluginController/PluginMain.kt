@@ -19,7 +19,7 @@ object PluginMain : KotlinPlugin(
     JvmPluginDescription(
         id = "org.sddn.hibiki",
         name = "HibikiTwitterAnnouncer",
-        version = "0.1.0"
+        version = "1.1.2"
     ) {
         author("七度")
 

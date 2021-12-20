@@ -74,7 +74,7 @@ suspend fun getTimelineAndSendMessage(
             else ->
                 inquirerGroup.sendMessage(
                     PlainText("哎呀，什么都没有找到呢")
-                        + Image("{29635AF7-C078-33BB-1317-E4A96600BC25}.png")
+                        + Image("{886929C6-7DEB-5878-3549-9DAB9310D323}.gif")
                 )
         }
 
@@ -141,7 +141,7 @@ suspend fun getTimelineAndSendMessage(
                     PlainText(
                         "哎呀，还没有设置Bearer Token呢"
                     ) +
-                        Image("{372536B0-2903-CE21-EE53-D89C18BC4363}.jpg")
+                        Image("{886929C6-7DEB-5878-3549-9DAB9310D323}.gif")
                 )
             }
         }
