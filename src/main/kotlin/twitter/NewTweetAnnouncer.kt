@@ -115,6 +115,11 @@ private suspend fun singleTryForNewTweet(group: Group, target: String) {
             }
         }
 
+        if (newestText.contains("RT")) {   // 过滤转发
+            PluginMain.logger.info("有消息被用户过滤器阻止")
+            continue
+        }
+
         val mediaUrls = if (data.containsKey("attachments")) {
             getMediaUrlsFromKeys(
                 tweetMedia = newestTweets.getJSONObject("includes").getJSONArray("media"),
@@ -128,10 +133,8 @@ private suspend fun singleTryForNewTweet(group: Group, target: String) {
         }
         // 由于tx不让新号一次发送约100(104?)个字符以上的PlainText，故此处使用特殊处理分割,可以通过命令开关
 
-        PluginMain.logger.info("正在向群${group.name}发送推送")
-
         if (ifFirstToSend) {
-            group.sendMessage("关注的推主@${target}有新推了哦")
+//            group.sendMessage("关注的推主@${target}有新推了哦")
             ifFirstToSend = false
         }
 
@@ -156,8 +159,10 @@ private suspend fun singleTryForNewTweet(group: Group, target: String) {
                 } while (!ifSuccess)
             }
             mediaUrls.clear()
-        }
+        } else continue   // 仅发送图片
+
         if (!toSay.isContentEmpty()) {
+            PluginMain.logger.info("正在向群${group.name}发送推送")
             group.sendMessage(toSay)
             delay(1000L)
         }
