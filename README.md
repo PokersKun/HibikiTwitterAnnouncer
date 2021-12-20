@@ -1,13 +1,11 @@
 # Hibiki-Twitter-Anouncer
 
 > 一个Twitter转发器
-
-第一个Kotlin应用和Mirai插件，代码写的不太好qwq
-
-可能会有bug ww
+> [原版仓库地址](https://github.com/7ddn/HibikiTwitterAnnouncer)
+> 根据实际需求改为Sock5代理方式，仅转发原创图片内容（过滤纯文本、转发内容）
 
 ## 下载
-可以从[releases](https://github.com/7ddn/HibikiTwitterAnnouncer/releases/tag/v1.0.0]https://github.com/7ddn/HibikiTwitterAnnouncer/releases/tag/v1.0.0)里下载
+可以从[releases](https://github.com/PokersKun/HibikiTwitterAnnouncer/releases)里下载
 
 ## 配置
 这个版本的config比较简陋，配置文件位于.\config\HibikiTwitterAnnouncer\config.yml
@@ -21,7 +19,7 @@ APIs:
   usersBy: 'https://api.twitter.com/2/users/by'
   recent: 'https://api.twitter.com/2/tweets/search/recent?query='
   
-# 本地代理的地址
+# 本地代理的地址（SOCKS5）
 # 由于大家都懂的原因Twitter并不能直接访问, 需要通过代理才能抓取Twitter信息
 Proxies: 
   host: 127.0.0.1
