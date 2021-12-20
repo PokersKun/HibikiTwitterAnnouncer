@@ -1,6 +1,10 @@
 package twitter
 
 import com.alibaba.fastjson.JSON
+import com.github.kittinunf.fuel.Fuel
+import com.github.kittinunf.fuel.core.extensions.jsonBody
+import com.github.kittinunf.fuel.gson.responseObject
+import dataClass.GoogleTranslate
 import kotlinx.coroutines.delay
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.contact.Group
@@ -129,6 +133,7 @@ private suspend fun singleTryForNewTweet(group: Group, target: String) {
 
         var toSay = PlainText("@${target}:\r\n").toMessageChain()
         if ("null" != newestText) {
+
             toSay += newestText.toPlainText()
         }
         // 由于tx不让新号一次发送约100(104?)个字符以上的PlainText，故此处使用特殊处理分割,可以通过命令开关
@@ -162,6 +167,14 @@ private suspend fun singleTryForNewTweet(group: Group, target: String) {
         } else continue   // 仅发送图片
 
         if (!toSay.isContentEmpty()) {
+             Fuel.post("https://translation.googleapis.com/language/translate/v2?key=")
+                .jsonBody("{ \"q\" : \"$newestText\", " +
+                    "  \"target\": \"zh\",\n" +
+                    "  \"format\": \"text\" }")
+                .responseObject<GoogleTranslate> { _, _, result ->
+                    val translateText = result.get().data?.translations?.get(0)?.translatedText
+                    toSay += "Google Translation:\r\n$translateText\r\n" }
+
             PluginMain.logger.info("正在向群${group.name}发送推送")
             group.sendMessage(toSay)
             delay(1000L)
