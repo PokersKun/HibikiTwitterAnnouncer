@@ -64,7 +64,7 @@ object PluginMain : KotlinPlugin(
                     group.sendMessage(toSay)
                 }
                 messageText.startsWith("可以复读") -> {
-                    PluginData.repeatProbability = 5
+                    PluginData.repeatProbability = 2    // 2%
                     group.sendMessage("好耶")
 
                 }

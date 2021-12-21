@@ -1,10 +1,12 @@
 package twitter
 
 import com.alibaba.fastjson.JSON
+import com.fasterxml.jackson.databind.JsonMappingException
 import com.github.kittinunf.fuel.Fuel
+import com.github.kittinunf.fuel.core.HttpException
 import com.github.kittinunf.fuel.core.extensions.jsonBody
-import com.github.kittinunf.fuel.gson.responseObject
-import dataClass.GoogleTranslate
+import com.github.kittinunf.fuel.coroutines.awaitObject
+import dataClass.TranslationDeserializer
 import kotlinx.coroutines.delay
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.contact.Group
@@ -167,17 +169,28 @@ private suspend fun singleTryForNewTweet(group: Group, target: String) {
         } else continue   // 仅发送图片
 
         if (!toSay.isContentEmpty()) {
-             Fuel.post("https://translation.googleapis.com/language/translate/v2?key=")
-                .jsonBody("{ \"q\" : \"$newestText\", " +
-                    "  \"target\": \"zh\",\n" +
-                    "  \"format\": \"text\" }")
-                .responseObject<GoogleTranslate> { _, _, result ->
-                    val translateText = result.get().data?.translations?.get(0)?.translatedText
-                    toSay += "Google Translation:\r\n$translateText\r\n" }
+            val apiKey = PluginConfig.Tokens["apiKey"]
+            if (apiKey == "") throw Exception("No Available Api Key")
 
-            PluginMain.logger.info("正在向群${group.name}发送推送")
-            group.sendMessage(toSay)
-            delay(1000L)
+            try {
+                val result = Fuel.post("${PluginConfig.APIs["translate"]}",
+                    listOf("key" to apiKey))
+                    .jsonBody("{ \"q\" : \"$newestText\", " +
+                        "  \"target\": \"zh\",\n" +
+                        "  \"format\": \"text\" }")
+                    .awaitObject(TranslationDeserializer)
+                if (result.data.translations[0].translatedText != "")
+                    toSay += "\r\nGoogle Translation:\r\n${result.data.translations[0].translatedText}"
+                PluginMain.logger.info("正在向群${group.name}发送推送：${toSay}")
+                group.sendMessage(toSay)
+                delay(1000L)
+            } catch (exception: Exception) {
+                when (exception) {
+                    is HttpException -> throw Exception("A network request exception was thrown: ${exception.message}")
+                    is JsonMappingException -> throw Exception("A serialization/deserialization exception was thrown: ${exception.message}")
+                    else -> throw Exception("An exception [${exception.javaClass.simpleName}\"] was thrown")
+                }
+            }
         }
     }
 

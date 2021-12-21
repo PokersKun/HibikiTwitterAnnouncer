@@ -18,8 +18,9 @@ repositories {
 dependencies {
     val fuel_version = "2.3.1"
     implementation("com.alibaba:fastjson:1.2.78")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.+")
     implementation("com.cloudconvert:cloudconvert-java:1.1.0")
     implementation("com.github.kittinunf.fuel:fuel:$fuel_version")
-    implementation("com.github.kittinunf.fuel:fuel-gson:$fuel_version")
-    implementation("com.google.code.gson:gson:2.8.9")
+    implementation("com.github.kittinunf.fuel:fuel-jackson:$fuel_version")
+    implementation("com.github.kittinunf.fuel:fuel-coroutines:$fuel_version")
 }
