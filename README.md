@@ -1,8 +1,12 @@
 # Hibiki-Twitter-Anouncer
 
-> 一个Twitter转发器
-> [原版仓库地址](https://github.com/7ddn/HibikiTwitterAnnouncer)
-> 根据实际需求改为Sock5代理方式，仅转发原创图片内容（过滤纯文本、转发内容）
+> 一个Twitter转发器 from [原版仓库地址](https://github.com/7ddn/HibikiTwitterAnnouncer)
+
+## 改动
+根据实际需求，主要做了如下改动
+* 改为Sock5代理方式
+* 仅转发原创图片内容（过滤纯文本、转推）
+* 通过谷歌翻译API实现自动翻译
 
 ## 下载
 可以从[releases](https://github.com/PokersKun/HibikiTwitterAnnouncer/releases)里下载
@@ -14,22 +18,25 @@
 
 ```yaml
 # API
-# Twitter的各项搜索API
+# Twitter/Google的各项API
 APIs: 
   usersBy: 'https://api.twitter.com/2/users/by'
   recent: 'https://api.twitter.com/2/tweets/search/recent?query='
+  showSingle: 'https://api.twitter.com/1.1/statuses/show.json?'
+  translate: 'https://translation.googleapis.com/language/translate/v2'
   
 # 本地代理的地址（SOCKS5）
-# 由于大家都懂的原因Twitter并不能直接访问, 需要通过代理才能抓取Twitter信息
+# 由于大家都懂的原因Twitter并不能直接访问，需要通过代理才能抓取Twitter信息
 Proxies: 
   host: 127.0.0.1
-  port: 0000
+  port: ''
   
-# Twitter API Token
-# 在Twitter注册应用之后会得到的Token,如果不填入该项会返回401错误
-# 建议使用bearerToken
+# Twitter API Token/Google Translation API Key
+# 在Twitter/Google注册应用之后会得到的Token/API Key，如果不填入该项会返回401错误
+# Twitter建议使用bearerToken
 Tokens: 
   bearerToken: 
+  apiKey: 
     
 # 拆分长文本开关
 # 尽在很少的场景会用到
