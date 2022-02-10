@@ -1,5 +1,6 @@
 package pluginController
 
+import commandHandler.messageEventHandler
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.mamoe.mirai.Bot
@@ -7,13 +8,8 @@ import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.event.globalEventChannel
-import net.mamoe.mirai.message.code.MiraiCode.deserializeMiraiCode
-import net.mamoe.mirai.message.data.MessageChain
-import net.mamoe.mirai.message.data.PlainText
 import net.mamoe.mirai.utils.info
 import twitter.checkNewTweet
-import commandHandler.messageEventHandler
-import kotlin.random.Random
 
 object PluginMain : KotlinPlugin(
     JvmPluginDescription(
@@ -39,7 +35,14 @@ object PluginMain : KotlinPlugin(
 
         PluginConfig.reload()
         PluginData.reload()
+
         PluginData.ifGroupListHasChanged = true
+
+        globalEventChannel().subscribeAlways<GroupMessageEvent> {
+            val messageText = message.contentToString()
+            messageEventHandler(messageText)
+            delay(100L)
+        }
 
         PluginMain.launch {
             while (true) {
