@@ -80,7 +80,6 @@ suspend fun checkNewTweet(bot: Bot) {
 
 private suspend fun singleTryForNewTweet(group: Group, target: String) {
     val newestTweets = getNewestTweet(
-        //"from:hibikiprprpr"
         "from:$target"
     ) ?: throw Exception("Fail on getting newest Tweet")
 

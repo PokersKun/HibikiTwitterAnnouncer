@@ -13,6 +13,22 @@ repositories {
     mavenLocal()
     maven("https://maven.aliyun.com/repository/public") // 阿里云国内代理仓库
     mavenCentral()
+    maven {
+        url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap")
+        name = "ktor-eap"
+    }
+    maven {
+        url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap")
+        name = "ktor-eap"
+    }
+    maven {
+        url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap")
+        name = "ktor-eap"
+    }
+    maven {
+        url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap")
+        name = "ktor-eap"
+    }
 }
 
 dependencies {

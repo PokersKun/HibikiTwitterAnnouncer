@@ -9,7 +9,6 @@ object PluginData : AutoSavePluginData("data") {
     val listeningListByGroup: MutableMap<Long, MutableSet<String>> by value()
     var ifGroupListHasChanged: Boolean by value(true)
     var lastTweetID: MutableMap<String, String> by value()
-    var repeatProbability: Int by value(2) // -1 for disable
     var filterWith: MutableMap<String, MutableSet<String>> by value()
     var filterWithout: MutableMap<String, MutableSet<String>> by value()
 }
