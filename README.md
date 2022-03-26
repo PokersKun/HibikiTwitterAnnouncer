@@ -4,7 +4,6 @@
 
 ## 改动
 根据实际需求，主要做了如下改动
-* 改为Sock5代理方式
 * 仅转发原创图片内容（过滤纯文本、转推）
 * 通过谷歌翻译API实现自动翻译
 
@@ -24,12 +23,6 @@ APIs:
   recent: 'https://api.twitter.com/2/tweets/search/recent?query='
   showSingle: 'https://api.twitter.com/1.1/statuses/show.json?'
   translate: 'https://translation.googleapis.com/language/translate/v2'
-  
-# 本地代理的地址（SOCKS5）
-# 由于大家都懂的原因Twitter并不能直接访问，需要通过代理才能抓取Twitter信息
-Proxies: 
-  host: 127.0.0.1
-  port: ''
   
 # Twitter API Token/Google Translation API Key
 # 在Twitter/Google注册应用之后会得到的Token/API Key，如果不填入该项会返回401错误

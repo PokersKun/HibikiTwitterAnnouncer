@@ -16,7 +16,6 @@ import net.mamoe.mirai.utils.info
 import pluginController.PluginConfig
 import pluginController.PluginData
 import pluginController.PluginMain
-import utils.proxy
 import java.net.URL
 
 suspend fun checkNewTweet(bot: Bot) {
@@ -25,7 +24,7 @@ suspend fun checkNewTweet(bot: Bot) {
 
     while (true) {
         if (PluginData.ifGroupListHasChanged) {
-            PluginMain.logger.info("Mirai重新启动或检测到订阅群列表发生变化，正在重新加载群列表")
+            PluginMain.logger.info("mirai 重新启动或检测到订阅群列表发生变化，正在重新加载群列表")
             group.clear()
             while (true) {
                 if (!PluginData.groups.isNullOrEmpty()) break
@@ -91,6 +90,13 @@ private suspend fun singleTryForNewTweet(group: Group, target: String) {
         PluginMain.logger.info("@${target}暂时没有更新")
         delay(1000L)
         return
+    } else if (resultCount == "-1") {
+        PluginMain.logger.info("@${target}可能删除了记录")
+        delay(1000L)
+        PluginData.lastTweetID[target] = "0"
+        PluginMain.logger.info("已重置@${target}的记录")
+        delay(1000L)
+        return
     }
 
     var ifFirstToSend = true
@@ -153,7 +159,7 @@ private suspend fun singleTryForNewTweet(group: Group, target: String) {
                 do {
                     try {
                         toSay += Image(
-                            URL(it).openConnection(proxy).getInputStream()
+                            URL(it).openConnection().getInputStream()
                                 .uploadAsImage(group)
                                 .imageId
                         )

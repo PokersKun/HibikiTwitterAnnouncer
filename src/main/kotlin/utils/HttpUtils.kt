@@ -30,13 +30,6 @@ fun recentSearchUrlGenerator(
 }
 
 val bearerToken = PluginConfig.Tokens["bearerToken"]
-val proxy = Proxy(
-//    Proxy.Type.HTTP, InetSocketAddress(
-    Proxy.Type.SOCKS, InetSocketAddress(    // change to socks5
-        PluginConfig.Proxies["host"].toString(),
-        PluginConfig.Proxies["port"].toString().toInt()
-    )
-)
 
 fun httpGet(url: String): JSONObject {
     if (bearerToken == "") throw Exception("No Available Bearer Token")
@@ -44,7 +37,7 @@ fun httpGet(url: String): JSONObject {
     PluginMain.logger.info("Now Getting from $url")
     val link = URL(url)
 
-    val connection = link.openConnection(proxy) as HttpURLConnection
+    val connection = link.openConnection() as HttpURLConnection
     connection.requestMethod = "GET"
     connection.connectTimeout = 5000
     connection.setRequestProperty("Content-Type", "application/json; charset=utf-8")
@@ -55,11 +48,12 @@ fun httpGet(url: String): JSONObject {
             InputStreamReader(connection.inputStream, "utf-8")
         )
         val output: String = reader.readLine()
-
         return JSON.parseObject(output)
-
     } catch (exception: Exception) {
         PluginMain.logger.info(exception.message)
+        if (connection.responseCode == 400) {
+            return JSON.parseObject("{\"meta\":{\"result_count\":-1}}")
+        }
         throw Exception(exception.message)
     }
 

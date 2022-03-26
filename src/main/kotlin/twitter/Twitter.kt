@@ -12,7 +12,6 @@ import pluginController.PluginConfig
 import pluginController.PluginData
 import pluginController.PluginMain
 import utils.httpGet
-import utils.proxy
 import utils.recentSearchUrlGenerator
 import java.net.URL
 import java.net.URLEncoder
@@ -32,9 +31,9 @@ fun getNewestTweet(
                 //去掉from:
             )
         )
-        if (timeline.containsKey("errors")){
+        if (timeline.containsKey("errors")) {
             val errorMessage = timeline.getJSONArray("errors").getJSONObject(0).getString("message")
-            if (errorMessage.contains("must be a tweet id created after")){
+            if (errorMessage.contains("must be a tweet id created after")) {
                 timeline = httpGet(
                     recentSearchUrlGenerator(
                         searchTarget = target,
@@ -123,7 +122,7 @@ suspend fun getTimelineAndSendMessage(
                 mediaUrls.forEach {
                     PluginMain.logger.info("url = $it")
                     toSay += Image(
-                        URL(it).openConnection(proxy).getInputStream()
+                        URL(it).openConnection().getInputStream()
                             .uploadAsImage(inquirerGroup)
                             .imageId
                     )

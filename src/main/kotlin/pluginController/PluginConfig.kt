@@ -13,13 +13,6 @@ object PluginConfig : AutoSavePluginConfig("config") {
         )
     )
 
-    val Proxies: MutableMap<String, String> by value(
-        mutableMapOf(
-            "host" to "127.0.0.1",
-            "port" to ""
-        )
-    )
-
     val Tokens: MutableMap<String, String> by value(
         mutableMapOf(
             "bearerToken" to "",

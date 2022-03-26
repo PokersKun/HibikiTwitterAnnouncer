@@ -30,16 +30,4 @@ object ConfigCommand : CompositeCommand(
             sendMessage("设置${target}失败，可能不存在该${target}")
         }
     }
-
-    @SubCommand
-    suspend fun CommandSender.proxy(target: String, value: String){
-        try {
-            PluginConfig.Proxies[target] = value
-            sendMessage("成功设置${target}为${value}")
-        } catch (e:Exception){
-            sendMessage("设置${target}失败")
-        }
-    }
-
-
 }
