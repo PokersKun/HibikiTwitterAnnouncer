@@ -205,10 +205,6 @@ suspend fun GroupMessageEvent.messageEventHandler(messageText: String) {
         return
     }
 
-    /*if (messageText == "取消全部订阅") {
-            PluginData.listeningListByGroup[group.id]!!.clear()
-        }*/
-
     if (messageText == "取消订阅") {
         if (PluginData.groups.contains(group.id)) {
             PluginData.groups.remove(group.id)
@@ -220,8 +216,7 @@ suspend fun GroupMessageEvent.messageEventHandler(messageText: String) {
         return
     }
 
-    // filter
-
+    // 过滤器
     val patternFilterWith = Regex("^添加@([a-zA-Z0-9_]+)的过滤器:包含(.+)$")
     val patternFilterWithout = Regex("^添加@([a-zA-Z0-9_]+)的过滤器:不包含(.+)$")
     when{
@@ -242,34 +237,4 @@ suspend fun GroupMessageEvent.messageEventHandler(messageText: String) {
             return
         }
     }
-
-    //@相关处理
-    if (messageText.contains("@${bot.id}")){
-        // 抓取gif
-
-        val patternConvertToGIF = Regex("gif([0-9]+)")
-        if (patternConvertToGIF.containsMatchIn(messageText)){
-            val matches = patternConvertToGIF.findAll(messageText)
-            val id = matches.map{ it.groupValues[1]}.joinToString()
-            val url = getRealMediaUrlFromTwitterID(id)
-            if (url!=""){
-                try {
-                    val convertedGIF = convertMP4ToGIF(url)
-                    if (convertedGIF!=null) {
-                        group.sendMessage("成功获取一张图片")
-                        group.sendMessage(Image(
-                            convertedGIF.uploadAsImage(group).imageId
-                        ))
-                    }
-                } catch (e:Exception){
-                    println("error at convert to gif invoke:$e")
-                    group.sendMessage("获取图片失败qwq")
-                }
-            }
-        }
-    }
-
-
-
-
 }

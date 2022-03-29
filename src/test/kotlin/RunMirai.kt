@@ -24,10 +24,6 @@ suspend fun main() {
 
     MiraiConsole.job.join()
 
-    GlobalScope.launch {
-        convertMP4ToGIF("https://video.twimg.com/tweet_video/E_AhfCsVgAktI8L.mp4")
-    }
-
     Thread.sleep(5000L)
 
 }

@@ -22,5 +22,4 @@ object PluginConfig : AutoSavePluginConfig("config") {
 
     var ifNeedToSplit : Boolean by value(false)
 
-
 }
