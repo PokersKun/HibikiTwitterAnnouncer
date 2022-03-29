@@ -7,10 +7,7 @@ import pluginController.PluginMain
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
-import java.net.InetSocketAddress
-import java.net.Proxy
 import java.net.URL
-
 
 fun recentSearchUrlGenerator(
     searchTarget: String = "YuGiOh_OCG_INFO",
@@ -18,7 +15,6 @@ fun recentSearchUrlGenerator(
     expansions: String = "attachments.media_keys",
     mediaFields: String = "url",
     sinceID: String = "0",
-    maxResults: Int = 10,
 ): String {
     return "${PluginConfig.APIs["recent"]}" +
         searchTarget +

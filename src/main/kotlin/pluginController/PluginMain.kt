@@ -59,5 +59,4 @@ object PluginMain : KotlinPlugin(
             checkNewTweet(bot)
         }
     }
-
 }

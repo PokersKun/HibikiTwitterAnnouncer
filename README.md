@@ -21,7 +21,6 @@
 APIs: 
   usersBy: 'https://api.twitter.com/2/users/by'
   recent: 'https://api.twitter.com/2/tweets/search/recent?query='
-  showSingle: 'https://api.twitter.com/1.1/statuses/show.json?'
   translate: 'https://translation.googleapis.com/language/translate/v2'
   
 # Twitter API Token/Google Translation API Key

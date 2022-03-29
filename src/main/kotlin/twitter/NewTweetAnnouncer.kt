@@ -16,7 +16,6 @@ import net.mamoe.mirai.utils.info
 import pluginController.PluginConfig
 import pluginController.PluginData
 import pluginController.PluginMain
-import utils.convertMP4ToGIF
 import java.net.URL
 
 suspend fun checkNewTweet(bot: Bot) {
@@ -134,16 +133,17 @@ private suspend fun singleTryForNewTweet(group: Group, target: String) {
 
         val photoUrls = if (data.containsKey("attachments")) {
             getPhotoUrlsFromKeys(
-                tweetMedia = newestTweets.getJSONObject("includes").getJSONArray("media"),
-                mediaKeys = data.getJSONObject("attachments").getJSONArray("media_keys")
+                newestTweets.getJSONObject("includes").getJSONArray("media"),
+                data.getJSONObject("attachments").getJSONArray("media_keys")
             )
         } else null
 
         val videoUrls = if (data.containsKey("attachments")) {
             getVideoUrlsFromKeys(
-                tweetId = newestTweetID,
-                tweetMedia = newestTweets.getJSONObject("includes").getJSONArray("media"),
-                mediaKeys = data.getJSONObject("attachments").getJSONArray("media_keys")
+                newestTweetID,
+                target,
+                newestTweets.getJSONObject("includes").getJSONArray("media"),
+                data.getJSONObject("attachments").getJSONArray("media_keys")
             )
         } else null
 
@@ -186,24 +186,12 @@ private suspend fun singleTryForNewTweet(group: Group, target: String) {
             checkNull = false
             PluginMain.logger.info("有${videoUrls.size}个视频")
             videoUrls.forEach {
-                var ifSuccess: Boolean
-                do {
-                    try {
-                        val convertedGIF = convertMP4ToGIF(it)
-                        toSay += Image(
-                            convertedGIF!!.uploadAsImage(group).imageId
-                        )
-                        ifSuccess = true
-                    } catch (e:Exception){
-                        PluginMain.logger.info("Error at uploading video: ${e.message}")
-                        ifSuccess = false
-                    }
-                } while (!ifSuccess)
+                toSay += "\nVideo Link: $it"
             }
             videoUrls.clear()
         }
 
-        if (!checkNull) continue // 仅转发图片和视频
+        if (checkNull) continue // 仅转发图片和视频
 
         if (!toSay.isContentEmpty()) {
             val apiKey = PluginConfig.Tokens["apiKey"]

@@ -15,6 +15,7 @@ import utils.httpGet
 import utils.recentSearchUrlGenerator
 import java.net.URL
 import java.net.URLEncoder
+import java.util.concurrent.TimeUnit
 import kotlin.math.min
 
 var globalNextToken: String? = ""
@@ -54,14 +55,12 @@ suspend fun getTimelineAndSendMessage(
     maxCount: Int = 1,
     startCount: Int = 0,
     target: String = "from:YuGiOh_OCG_INFO",
-    maxResults: Int = 10,
 ) {
     try {
         val timeline = httpGet(
             recentSearchUrlGenerator(
-                nextToken = nextToken,
                 searchTarget = URLEncoder.encode(target, "utf-8"),
-                maxResults = maxResults
+                nextToken = nextToken
             )
         )
         val tweetMeta = JSON.parseObject(timeline.getJSONObject("meta").toString())
@@ -145,20 +144,17 @@ suspend fun getTimelineAndSendMessage(
             }
         }
     }
-
 }
 
-suspend fun getRealMediaUrlFromTwitterID(id:String):String{
+fun getRealMediaUrlFromTwitterID(id: String, target: String):String{
     return try {
-        val tweet = httpGet(
-            "${PluginConfig.APIs["showSingle"]}" + "id=$id"
-        )
-        val extendedEntities = JSON.parseObject(tweet.getJSONObject("extended_entities").toString())
-        val medias = extendedEntities.getJSONArray("media")
-        val media = medias.getJSONObject(0)
-        val mediaInfo = media.getJSONObject("video_info")
-        mediaInfo.getJSONArray("variants").getJSONObject(0)
-            .getString("url")
+        var url: String?
+        val process = ProcessBuilder("/app/extras/youtube-dl", "--get-url", "https://twitter.com/$target/status/$id").start()
+        process.inputStream.reader(Charsets.UTF_8).use {
+            url = it.readText()
+        }
+        process.waitFor(10, TimeUnit.SECONDS)
+        url.toString()
     } catch (e:Exception){
         println("error at getRealMediaUrlFromTwitterID: $e ")
         ""
@@ -192,8 +188,9 @@ fun getPhotoUrlsFromKeys(
     return photoUrls
 }
 
-suspend fun getVideoUrlsFromKeys(
+fun getVideoUrlsFromKeys(
     tweetId: String,
+    tweetTarget: String,
     tweetMedia: JSONArray?,
     mediaKeys: List<Any>,
 ): MutableList<String> {
@@ -201,7 +198,7 @@ suspend fun getVideoUrlsFromKeys(
     for (i in 0 until tweetMedia?.size!!) {
         val media = tweetMedia.getJSONObject(i)
         if (media.getString("type") == "video" && media.getString("media_key").toString() in mediaKeys) {
-            val url = getRealMediaUrlFromTwitterID(tweetId)
+            val url = getRealMediaUrlFromTwitterID(tweetId, tweetTarget)
             videoUrls.add(url)
         }
     }

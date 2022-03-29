@@ -8,7 +8,6 @@ object PluginConfig : AutoSavePluginConfig("config") {
         mutableMapOf(
             "usersBy" to "https://api.twitter.com/2/users/by",
             "recent" to "https://api.twitter.com/2/tweets/search/recent?query=",
-            "showSingle" to "https://api.twitter.com/1.1/statuses/show.json?",
             "translate" to "https://translation.googleapis.com/language/translate/v2"
         )
     )
