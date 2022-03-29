@@ -83,7 +83,7 @@ suspend fun getTimelineAndSendMessage(
 
         globalNextToken = tweetMeta?.getString("next_token")
 
-        var mediaUrls: MutableList<String> = mutableListOf()
+        var photoUrls: MutableList<String> = mutableListOf()
 
         for (count in startCount until min(startCount + maxCount, min(10, resultCount.toInt()))) {
             var toSay: Message = buildMessageChain { }
@@ -95,7 +95,7 @@ suspend fun getTimelineAndSendMessage(
             if (newestTweet != null) {
                 if (newestTweet.containsKey("attachments")) {
                     val mediaKeys = newestTweet.getJSONObject("attachments").getJSONArray("media_keys").toList()
-                    mediaUrls = getMediaUrlsFromKeys(tweetMedia, mediaKeys)
+                    photoUrls = getPhotoUrlsFromKeys(tweetMedia, mediaKeys)
                 }
 
             }
@@ -117,9 +117,9 @@ suspend fun getTimelineAndSendMessage(
 
             if (PluginConfig.ifNeedToSplit) toSay = sendAndSplitToUnder100(toSay.content.toPlainText(), inquirerGroup)
 
-            if (mediaUrls.isNotEmpty()) {
-                PluginMain.logger.info("有${mediaUrls.size}张图片")
-                mediaUrls.forEach {
+            if (photoUrls.isNotEmpty()) {
+                PluginMain.logger.info("有${photoUrls.size}张图片")
+                photoUrls.forEach {
                     PluginMain.logger.info("url = $it")
                     toSay += Image(
                         URL(it).openConnection().getInputStream()
@@ -127,7 +127,7 @@ suspend fun getTimelineAndSendMessage(
                             .imageId
                     )
                 }
-                mediaUrls.clear()
+                photoUrls.clear()
             }
 
             if (!toSay.isContentEmpty()) inquirerGroup.sendMessage(toSay)
@@ -178,18 +178,34 @@ fun checkUserName(userName: String): String {
     }
 }
 
-fun getMediaUrlsFromKeys(
+fun getPhotoUrlsFromKeys(
     tweetMedia: JSONArray?,
     mediaKeys: List<Any>,
 ): MutableList<String> {
-    val mediaUrls: MutableList<String> = mutableListOf()
+    val photoUrls: MutableList<String> = mutableListOf()
     for (i in 0 until tweetMedia?.size!!) {
         val media = tweetMedia.getJSONObject(i)
         if (media.getString("type") == "photo" && media.getString("media_key").toString() in mediaKeys) {
-            mediaUrls.add(media.getString("url"))
+            photoUrls.add(media.getString("url"))
         }
     }
-    return mediaUrls
+    return photoUrls
+}
+
+suspend fun getVideoUrlsFromKeys(
+    tweetId: String,
+    tweetMedia: JSONArray?,
+    mediaKeys: List<Any>,
+): MutableList<String> {
+    val videoUrls: MutableList<String> = mutableListOf()
+    for (i in 0 until tweetMedia?.size!!) {
+        val media = tweetMedia.getJSONObject(i)
+        if (media.getString("type") == "video" && media.getString("media_key").toString() in mediaKeys) {
+            val url = getRealMediaUrlFromTwitterID(tweetId)
+            videoUrls.add(url)
+        }
+    }
+    return videoUrls
 }
 
 suspend fun sendAndSplitToUnder100 (message : PlainText, target: Contact) : MessageChain { //将要发送的PlainText拆分成最长99的字节并发送

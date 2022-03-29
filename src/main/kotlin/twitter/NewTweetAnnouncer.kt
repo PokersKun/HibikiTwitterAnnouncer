@@ -16,6 +16,7 @@ import net.mamoe.mirai.utils.info
 import pluginController.PluginConfig
 import pluginController.PluginData
 import pluginController.PluginMain
+import utils.convertMP4ToGIF
 import java.net.URL
 
 suspend fun checkNewTweet(bot: Bot) {
@@ -131,8 +132,16 @@ private suspend fun singleTryForNewTweet(group: Group, target: String) {
             continue
         }
 
-        val mediaUrls = if (data.containsKey("attachments")) {
-            getMediaUrlsFromKeys(
+        val photoUrls = if (data.containsKey("attachments")) {
+            getPhotoUrlsFromKeys(
+                tweetMedia = newestTweets.getJSONObject("includes").getJSONArray("media"),
+                mediaKeys = data.getJSONObject("attachments").getJSONArray("media_keys")
+            )
+        } else null
+
+        val videoUrls = if (data.containsKey("attachments")) {
+            getVideoUrlsFromKeys(
+                tweetId = newestTweetID,
                 tweetMedia = newestTweets.getJSONObject("includes").getJSONArray("media"),
                 mediaKeys = data.getJSONObject("attachments").getJSONArray("media_keys")
             )
@@ -140,21 +149,21 @@ private suspend fun singleTryForNewTweet(group: Group, target: String) {
 
         var toSay = PlainText("@${target}:\r\n").toMessageChain()
         if ("null" != newestText) {
-
             toSay += newestText.toPlainText()
         }
         // 由于tx不让新号一次发送约100(104?)个字符以上的PlainText，故此处使用特殊处理分割,可以通过命令开关
 
         if (ifFirstToSend) {
-//            group.sendMessage("关注的推主@${target}有新推了哦")
             ifFirstToSend = false
         }
 
         if (PluginConfig.ifNeedToSplit) toSay = sendAndSplitToUnder100(toSay.content.toPlainText(), group)
 
-        if (!mediaUrls.isNullOrEmpty()) {
-            PluginMain.logger.info("有${mediaUrls.size}张图片")
-            mediaUrls.forEach {
+        var checkNull = true
+        if (!photoUrls.isNullOrEmpty()) {
+            checkNull = false
+            PluginMain.logger.info("有${photoUrls.size}张图片")
+            photoUrls.forEach {
                 var ifSuccess: Boolean
                 do {
                     try {
@@ -170,8 +179,31 @@ private suspend fun singleTryForNewTweet(group: Group, target: String) {
                     }
                 } while (!ifSuccess)
             }
-            mediaUrls.clear()
-        } else continue   // 仅发送图片
+            photoUrls.clear()
+        }
+
+        if (!videoUrls.isNullOrEmpty()) {
+            checkNull = false
+            PluginMain.logger.info("有${videoUrls.size}个视频")
+            videoUrls.forEach {
+                var ifSuccess: Boolean
+                do {
+                    try {
+                        val convertedGIF = convertMP4ToGIF(it)
+                        toSay += Image(
+                            convertedGIF!!.uploadAsImage(group).imageId
+                        )
+                        ifSuccess = true
+                    } catch (e:Exception){
+                        PluginMain.logger.info("Error at uploading video: ${e.message}")
+                        ifSuccess = false
+                    }
+                } while (!ifSuccess)
+            }
+            videoUrls.clear()
+        }
+
+        if (!checkNull) continue // 仅转发图片和视频
 
         if (!toSay.isContentEmpty()) {
             val apiKey = PluginConfig.Tokens["apiKey"]
@@ -198,5 +230,4 @@ private suspend fun singleTryForNewTweet(group: Group, target: String) {
             }
         }
     }
-
 }
