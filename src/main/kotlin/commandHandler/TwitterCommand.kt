@@ -11,7 +11,7 @@ object Query : SimpleCommand (
     ){
         @Handler
         suspend fun MemberCommandSenderOnMessage.query(target: String, number: Int){
-            getTimelineAndSendMessage(group, target = "from:${String}", maxCount = number)
+            getTimelineAndSendMessage(group, maxCount = number, target = "from:${String}")
         }
 }
 
@@ -21,6 +21,6 @@ object Search : SimpleCommand (
     ){
         @Handler
         suspend fun MemberCommandSenderOnMessage.search(target: String, number: Int){
-            getTimelineAndSendMessage(group, target = "${String}", maxCount = number)
+            getTimelineAndSendMessage(group, maxCount = number, target = "${String}")
         }
 }

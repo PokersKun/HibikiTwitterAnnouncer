@@ -1,23 +1,21 @@
 package commandHandler
 
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.mamoe.mirai.event.events.GroupMessageEvent
-import net.mamoe.mirai.message.data.Image
 import net.mamoe.mirai.message.data.PlainText
 import net.mamoe.mirai.message.data.toMessageChain
 import net.mamoe.mirai.message.data.toPlainText
-import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
 import pluginController.PluginConfig
 import pluginController.PluginData
 import pluginController.PluginMain
 import twitter.checkUserName
-import twitter.getRealMediaUrlFromTwitterID
 import twitter.getTimelineAndSendMessage
 import twitter.sendAndSplitToUnder100
-import utils.convertMP4ToGIF
 
+@DelicateCoroutinesApi
 suspend fun GroupMessageEvent.messageEventHandler(messageText: String) {
 
 
@@ -109,8 +107,8 @@ suspend fun GroupMessageEvent.messageEventHandler(messageText: String) {
                 GlobalScope.launch {
                     getTimelineAndSendMessage(
                         inquirerGroup = group,
-                        startCount = 0,
                         maxCount = matches.map { it.groupValues[2] }.joinToString().toInt(),
+                        startCount = 0,
                         target = "from:" + matches.map { it.groupValues[1] }.joinToString(),
                     )
                 }
@@ -120,8 +118,8 @@ suspend fun GroupMessageEvent.messageEventHandler(messageText: String) {
                 GlobalScope.launch {
                     getTimelineAndSendMessage(
                         inquirerGroup = group,
-                        startCount = 0,
                         maxCount = matches.map { it.groupValues[2] }.joinToString().toInt(),
+                        startCount = 0,
                         target = matches.map { it.groupValues[1] }.joinToString(),
                     )
                 }

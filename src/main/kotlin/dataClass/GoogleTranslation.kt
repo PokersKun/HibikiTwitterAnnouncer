@@ -4,7 +4,6 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.kittinunf.fuel.core.ResponseDeserializable
 
-
 data class GoogleTranslation(
     @JsonProperty("data")
     val `data`: Data
