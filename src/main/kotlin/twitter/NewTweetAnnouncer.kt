@@ -204,7 +204,7 @@ private suspend fun singleTryForNewTweet(group: Group, target: String) {
                         "  \"target\": \"zh\",\n" +
                         "  \"format\": \"text\" }")
                     .awaitObject(TranslationDeserializer)
-                if (result.data.translations[0].detectedSourceLanguage != "zh" && //仅翻译非中文内容
+                if (!result.data.translations[0].detectedSourceLanguage.contains("zh") && //仅翻译非中文内容
                     result.data.translations[0].translatedText != "")
                     toSay += "\r\nGoogle Translation:\r\n${result.data.translations[0].translatedText}"
                 PluginMain.logger.info("正在向群${group.name}发送推送：${toSay}")
